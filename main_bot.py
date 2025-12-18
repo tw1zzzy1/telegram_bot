@@ -6,6 +6,7 @@ from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes, CommandHandler
 
 from processing import processing
+from users_id import users_id
 
 token = token = os.getenv("BOT_TOKEN")
 
@@ -42,21 +43,22 @@ def update_raspisanie():
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
-    if user_id not in activeusers:
-        append_active_user(user_id)
-    keyboard = [
-        [KeyboardButton("Расписание"), KeyboardButton("Звонки")]
-    ]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-    await update.message.reply_text(f"Привет, это бот который отправляет расписание группы '516В'",reply_markup=reply_markup)
+    if user_id in users_id:
+        if user_id not in activeusers:
+            append_active_user(user_id)
+        keyboard = [
+            [KeyboardButton("Расписание"), KeyboardButton("Звонки")]
+        ]
+        reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+        await update.message.reply_text(f"Привет, это бот который отправляет расписание группы '516В'",reply_markup=reply_markup)
 
 async def get_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
-    if (update.message.text == "Расписание"):
+    if (update.message.text == "Расписание") and (user_id in users_id):
         if user_id not in activeusers:
             append_active_user(user_id)
         await update.message.reply_text(raspisanie)
-    if (update.message.text == "Звонки"):
+    if (update.message.text == "Звонки") and (user_id in users_id):
         if user_id not in activeusers:
             append_active_user(user_id)
         with open("zvonki.jpg", "rb") as photo:
