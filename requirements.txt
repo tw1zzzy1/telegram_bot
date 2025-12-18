@@ -1,0 +1,5 @@
+python-telegram-bot 
+requests 
+xlrd 
+python-telegram-bot[job-queue] 
+openpyxl
