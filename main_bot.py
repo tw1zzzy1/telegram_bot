@@ -22,14 +22,6 @@ def cleardir():
         if os.path.isfile(file_path):
             os.remove(file_path)
 
-
-def append_active_user(id):
-    global activeusers
-    activeusers.append(id)
-    with open('activeusers.txt', 'a') as f:
-        f.write(str(id)+'\n')
-
-
 def update_raspisanie():
     global raspisanie
     
@@ -78,27 +70,11 @@ async def get_task(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def checkfile(context: ContextTypes.DEFAULT_TYPE):
     hour = int(datetime.datetime.now().hour)
     if (10<hour<21) or (raspisanie == ""):
-        if update_raspisanie():
-            await notify(context)
-
-
-async def notify(context):
-    for user in activeusers:
-        try:
-            await context.bot.send_message(chat_id=user, text="Доступно новое расписание!")
-        except:
-            pass
-
+        update_raspisanie()
+            
 def main():
     global app    
     cleardir()
-    if not os.path.exists('activeusers.txt'):
-        open('activeusers.txt', 'x').close()
-    with open('activeusers.txt', 'r') as f:
-        for line in f:
-            line = line.strip()
-            if line.isdigit():
-                activeusers.append(int(line))
 
     app = ApplicationBuilder().token(token).build()
 
